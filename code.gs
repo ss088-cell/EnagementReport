@@ -94,7 +94,14 @@ function importDefectDojoReport() {
     const range = sheetData.getRange(1, 1, lastRow, headers.length);
     range.setBorder(true, true, true, true, true, true);  // Set all borders
 
+    // Enable text wrapping for the "Title" and "Security Team comments" columns
+    const titleColumnRange = sheetData.getRange(2, 7, lastRow - 1); // "Title" is the 7th column
+    const commentsColumnRange = sheetData.getRange(2, 12, lastRow - 1); // "Security Team comments" is the 12th column
+    titleColumnRange.setWrap(true);
+    commentsColumnRange.setWrap(true);
+
   } catch (error) {
     Logger.log("Error fetching or processing data: " + error.message);
   }
 }
+
