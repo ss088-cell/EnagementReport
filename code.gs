@@ -31,20 +31,16 @@ function importDefectDojoReport() {
     // Check the structure of the response to ensure it's correct
     Logger.log(jsonData);
 
-    // Get the active sheet in the spreadsheet
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("EngagementReport");  // Replace with your sheet name
+    // Create a new Google Sheet
+    const sheetName = "EngagementReport_" + new Date().toISOString().slice(0, 10); // Creates a unique sheet name with date
+    const sheet = SpreadsheetApp.create(sheetName);  // Create a new spreadsheet
 
-    // Check if the sheet exists, if not, throw an error
-    if (!sheet) {
-      throw new Error("Sheet 'EngagementReport' not found. Please make sure it exists.");
-    }
-
-    // Clear previous data in the sheet if necessary
-    sheet.clear();
+    // Get the active sheet in the newly created spreadsheet
+    const sheetData = sheet.getActiveSheet(); 
 
     // Parse JSON data and insert it into the Google Sheet
     const headers = ["Description", "File Path", "ID", "Mitigation", "References", "Severity", "Title", "Found By"];  // Specified headers
-    sheet.appendRow(headers);  // Adding headers to the sheet
+    sheetData.appendRow(headers);  // Adding headers to the sheet
 
     // Assuming jsonData contains an array of findings or results in `findings`
     const reportData = jsonData.findings;  // Adjust based on actual JSON structure
@@ -63,7 +59,7 @@ function importDefectDojoReport() {
             finding.title,
             finding.found_by
           ];
-          sheet.appendRow(row);
+          sheetData.appendRow(row);
         }
       });
       Logger.log("Data import complete.");
