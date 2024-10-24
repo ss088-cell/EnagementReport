@@ -23,35 +23,47 @@ function importDefectDojoReport() {
     payload: JSON.stringify(payload)
   };
 
-  // Make the POST request to generate the report
-  const response = UrlFetchApp.fetch(apiUrl, options);
-  const jsonData = JSON.parse(response.getContentText());
+  try {
+    // Make the POST request to generate the report
+    const response = UrlFetchApp.fetch(apiUrl, options);
+    const jsonData = JSON.parse(response.getContentText());
 
-  // Check the structure of the response to see if report is ready or if there's a status
-  Logger.log(jsonData);
+    // Check the structure of the response to ensure it's correct
+    Logger.log(jsonData);
 
-  // Get the active sheet in the spreadsheet
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("EngagementReport");  // Replace with your sheet name
+    // Get the active sheet in the spreadsheet
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("EngagementReport");  // Replace with your sheet name
 
-  // Clear previous data if necessary
-  sheet.clear();
+    // Check if the sheet exists, if not, throw an error
+    if (!sheet) {
+      throw new Error("Sheet 'EngagementReport' not found. Please make sure it exists.");
+    }
 
-  // Parse JSON data and insert it into the Google Sheet
-  // Adjust this according to the structure of the JSON response
-  const headers = ["Title", "Severity", "Description"];  // Example headers (adjust to actual field names)
-  sheet.appendRow(headers);  // Adding headers to the sheet
+    // Clear previous data in the sheet if necessary
+    sheet.clear();
 
-  // Assuming jsonData contains an array of findings or results in `findings`
-  const reportData = jsonData.findings;  // Adjust based on actual JSON structure
-  reportData.forEach(function(finding) {
-    // Extract relevant data from each finding (adjust fields to match actual structure)
-    const row = [
-      finding.title,
-      finding.severity,
-      finding.description
-    ];
-    sheet.appendRow(row);
-  });
+    // Parse JSON data and insert it into the Google Sheet
+    const headers = ["Title", "Severity", "Description"];  // Example headers (adjust to actual field names)
+    sheet.appendRow(headers);  // Adding headers to the sheet
 
-  Logger.log("Data import complete.");
+    // Assuming jsonData contains an array of findings or results in `findings`
+    const reportData = jsonData.findings;  // Adjust based on actual JSON structure
+    if (reportData) {
+      reportData.forEach(function(finding) {
+        // Extract relevant data from each finding (adjust fields to match actual structure)
+        const row = [
+          finding.title,
+          finding.severity,
+          finding.description
+        ];
+        sheet.appendRow(row);
+      });
+      Logger.log("Data import complete.");
+    } else {
+      Logger.log("No findings data found in the report.");
+    }
+  } catch (error) {
+    Logger.log("Error fetching or processing data: " + error.message);
+  }
 }
+
