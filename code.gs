@@ -43,7 +43,7 @@ function importDefectDojoReport() {
     sheet.clear();
 
     // Parse JSON data and insert it into the Google Sheet
-    const headers = ["Title", "Severity", "Description", "Display Status"];  // Example headers (adjust to actual field names)
+    const headers = ["Title", "Severity", "Description"];  // Example headers (adjust to actual field names)
     sheet.appendRow(headers);  // Adding headers to the sheet
 
     // Assuming jsonData contains an array of findings or results in `findings`
@@ -56,8 +56,8 @@ function importDefectDojoReport() {
           const row = [
             finding.title,
             finding.severity,
-            finding.description,
-            finding.display_status // Adding display_status to the row
+            finding.description
+            // Removed finding.display_status from the row
           ];
           sheet.appendRow(row);
         }
@@ -70,3 +70,4 @@ function importDefectDojoReport() {
     Logger.log("Error fetching or processing data: " + error.message);
   }
 }
+
