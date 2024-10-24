@@ -59,11 +59,8 @@ function importDefectDojoReport() {
     const headerRange = sheetData.getRange(1, 1, 1, headers.length);
     headerRange.setFontWeight("bold");
 
-    // Apply borders to all cells
-    const range = sheetData.getRange(1, 1, sheetData.getLastRow(), headers.length);
-    range.setBorder(true, true, true, true, true, true);  // Set all borders
-
-    // Assuming jsonData contains an array of findings or results in `findings`
+    // Prepare to apply borders to all cells after data has been added
+    let lastRow = 1; // Initialize lastRow to 1 for headers
     const reportData = jsonData.findings;  // Adjust based on actual JSON structure
     if (reportData) {
       reportData.forEach(function(finding) {
@@ -85,14 +82,19 @@ function importDefectDojoReport() {
             ""  // Blank for "Security Team comments"
           ];
           sheetData.appendRow(row);
+          lastRow++; // Increment lastRow for each new row added
         }
       });
       Logger.log("Data import complete.");
     } else {
       Logger.log("No findings data found in the report.");
     }
+
+    // Apply borders to the entire data range, including headers
+    const range = sheetData.getRange(1, 1, lastRow, headers.length);
+    range.setBorder(true, true, true, true, true, true);  // Set all borders
+
   } catch (error) {
     Logger.log("Error fetching or processing data: " + error.message);
   }
 }
-
