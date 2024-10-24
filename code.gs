@@ -55,6 +55,14 @@ function importDefectDojoReport() {
     ];  
     sheetData.appendRow(headers);  // Adding headers to the sheet
 
+    // Set the first row to bold
+    const headerRange = sheetData.getRange(1, 1, 1, headers.length);
+    headerRange.setFontWeight("bold");
+
+    // Apply borders to all cells
+    const range = sheetData.getRange(1, 1, sheetData.getLastRow(), headers.length);
+    range.setBorder(true, true, true, true, true, true);  // Set all borders
+
     // Assuming jsonData contains an array of findings or results in `findings`
     const reportData = jsonData.findings;  // Adjust based on actual JSON structure
     if (reportData) {
@@ -87,3 +95,4 @@ function importDefectDojoReport() {
     Logger.log("Error fetching or processing data: " + error.message);
   }
 }
+
